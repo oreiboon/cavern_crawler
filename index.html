@@ -1,4 +1,5 @@
 <html>
+    <script src="scripts/upgrade_list.js"></script>
     <script src="scripts/main.js"></script>
     <script src="scripts/stat_calculator.js"></script>
     <style id="main-style">
@@ -11,7 +12,7 @@
             <div id="title_div">
                 <div id="title-text" style="font-weight: bold;">
                     <span style="--i:0">C</span><span style="--i:1">A</span><span style="--i:2">V</span><span style="--i:3">E</span><span style="--i:4">R</span><span style="--i:5">N</span> <span style="--i:6">C</span><span style="--i:7">R</span><span style="--i:8">A</span><span style="--i:9">W</span><span style="--i:10">L</span><span style="--i:11">E</span><span style="--i:12">R</span>
-                    <span style="--i:13; font-size: 75%; font-weight: bold;">PROTOTYPE (v0.0.8)</span>
+                    <span style="--i:13; font-size: 75%; font-weight: bold;">PROTOTYPE (v0.1.0a)</span>
                 </div>
             </div>
 
@@ -62,30 +63,10 @@
                     <div class="seperator"></div>
                     <div id="stats_container">
                         <div id="player_stats_container" style="display: none;">
-                            <div style="height: 24px;">Your Stats:</div>
                             <div class="fill_bar_base" id="courage_bar">
                                 <div class="bar_text" style="position: absolute; margin-left: 4px; margin-top: 4px;">Courage: 10/10</div>
-                                <div class="fill_bar" style="--percent: 0.5; background-color: rgb(214, 114, 64);"></div>
+                                <div class="fill_bar" style="--percent: 0.5;"></div>
                             </div>
-
-                            <div class="fill_bar_base" id="health_bar">
-                                <div class="bar_text" style="position: absolute; margin-left: 4px; margin-top: 4px;">Health: 5/5</div>
-                                <div class="fill_bar" style="--percent: 0.5; background-color: rgb(24, 226, 125);"></div>
-                            </div>
-
-                            <div id="player_attack">Attack: 1</div>
-                            <div id="player_defense">Defense: 0</div>
-                            <div id="player_attack_speed">Attack Speed: 1.00x</div>
-                            <div id="player_speed">Move Speed: 1.00x</div>
-                        </div><div id="enemy_stats_container" style="display: none;">
-                            <div style="height: 24px;">Enemy Stats:</div>
-                            <div class="fill_bar_base" id="enemy_health_bar">
-                                <div class="bar_text" style="position: absolute; margin-left: 4px; margin-top: 4px;">Health: 5/5</div>
-                                <div class="fill_bar" style="--percent: 0.5; background-color: rgb(24, 226, 125);"></div>
-                            </div>
-                            <div id="enemy_attack">Attack: 1</div>
-                            <div id="enemy_defense">Defense: 0</div>
-                            <div id="enemy_speed">Attack Speed: 1.00x</div>
                         </div>
                     </div>
                 </div>
@@ -93,15 +74,11 @@
                 <div id="tab_upgrades" style="display: none;">
                      <div id="game_tab_select_container">
                         <button id="upgrade_tab_basic" class="game_tab_select" data-selected=true onclick="changeupgradetab('basic')">Basic</button>
-                        <button id="upgrade_tab_combat" class="game_tab_select" style="display: none;" onclick="changeupgradetab('combat')">Combat</button>
-                        <button id="upgrade_tab_prestige" class="game_tab_select" style="display: none;" onclick="changeupgradetab('prestige')">Prestige</button>
                     </div>
                     
                     <div class="seperator"></div>
 
                     <div id="upgrade_container_basic" class="upgrade_container"></div>
-                    <div id="upgrade_container_combat" class="upgrade_container"></div>
-                    <div id="upgrade_container_prestige" class="upgrade_container"></div>
                 </div>
 
                 <div id="tab_prestige" style="display: none;">
@@ -132,6 +109,10 @@
                     </div>
                 </div>
             </div>
+        </div>
+        <div id="desktop_hover_description" style="opacity: 0%;">
+            <div id="desktop_hover_descriptionA"></div>
+            <div id="desktop_hover_descriptionB"></div>
         </div>
     </body>
 </html>

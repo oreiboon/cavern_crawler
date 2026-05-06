@@ -7,32 +7,35 @@
 
 *{
     color: #FFFFFF;
-    text-shadow: black 0px 0px 4px;
-    font-size: 18px;
+    text-shadow: #00000088 2px 2px 3px;
+    font-size: 16px;
 
-    --page-background-color: #555559;
-    --button-normal-color: #77777F;
-    --button-highlight-color: #AAAAAF;
-    --button-disabled-color: #666669;
-    --bar-background-color: #333337;
+    --page-background-color: #202020;
+    --button-normal-color: #727272;
+    --button-highlight-color: #929292;
+    --button-disabled-color: #555555;
+    --bar-background-color: #252525;
+    --hover-description-color: #000000aa;
+    --default-radius: 2px;
 }
 
 html {
     background-color: var(--page-background-color);
+    overflow: hidden;
 }
 
 button {
     transition: background 0.25s, opacity 0.25s, color 0.25s;
-    background-color: var(--button-normal-color);
+    background: linear-gradient(0deg, rgb(from var(--button-normal-color) r g b / 40%), rgb(from var(--button-normal-color) r g b / 80%), var(--button-normal-color));
 
     border: none;
-    border-radius: 4px;
+    border-radius: var(--default-radius);
     outline: 1px solid black;
 }
 
 button:enabled:hover {
     cursor: pointer;
-    background-color: var(--button-highlight-color);
+    background: linear-gradient(0deg, rgb(from var(--button-highlight-color) r g b / 40%), rgb(from var(--button-highlight-color) r g b / 80%), var(--button-highlight-color));
 }
 
 button:disabled {
@@ -58,7 +61,7 @@ img {
     margin-left: 5%;
     margin-top: 4px;
     margin-bottom: 4px;
-    background-image: linear-gradient(to right, #00000000, #00000044, #00000000);
+    background-image: linear-gradient(to right, #FFFFFF00, #FFFFFF44, #FFFFFF00);
 }
 
 .game_tab_select {
@@ -98,16 +101,16 @@ div > .fill_bar {
     width: calc(100% * var(--percent));
     height: 100%;
 
-    border-radius: 4px;
+    border-radius: var(--default-radius);
     transition: width 0.2s;
 }
 
 .upgrade_button {
-    width: 160px;
-    height: 160px;
+    width: 10%;
+    aspect-ratio: 1;
     margin: 4px;
 
-    border-radius: 4px;
+    border-radius: var(--default-radius);
 }
 
 .upgrade_button[_maxxed=true] {
@@ -165,6 +168,13 @@ div > .fill_bar {
     flex-wrap: wrap;
 }
 
+.upgrade_icon {
+    width: 100%;
+    aspect-ratio: 1;
+    /* filter: blur(2px);
+    opacity: 50%; */
+}
+
 /* ID Styles */
 
 #game_tab_select_container {
@@ -185,7 +195,7 @@ div > .fill_bar {
 
     width: 768px;
 
-    border-radius: 4px;
+    border-radius: var(--default-radius);
     background-color: #00000000;
 }
 #title_div {
@@ -234,28 +244,20 @@ div > .fill_bar {
 }
 
 #start_run_button, #prestige_button {
-    width: 90%;
-
+    width: calc(100% - 12px);
     height: 32px;
 
-    margin-left: 5%;
-    margin-right: 5%;
+    margin-left: 6px;
+
     margin-top: 4px;
     margin-bottom: 4px;
 }
 
 #player_stats_container {
-    margin-left: 32px;
-    margin-right: 32px;
+    margin-left: 6px;
+    margin-right: 6px;
     
-    width: calc(50% - 128px);
-}
-
-#enemy_stats_container {
-    margin-left: 32px;
-    margin-right: 32px;
-    
-    width: calc(50% - 128px);
+    width: 100%;
 }
 
 #stats_container {
@@ -265,11 +267,43 @@ div > .fill_bar {
     justify-content: center;
 }
 
-#courage_bar, #health_bar, #enemy_health_bar {
-    height: 32px;
+#courage_bar {
+    width: 100%;
+    height: 24px;
+
     background-color: var(--bar-background-color);
-    border-radius: 4px;
-    margin-bottom: 8px;
+    border-radius: var(--default-radius);
+}
+
+#courage_bar > .fill_bar {
+    --base-color: #8E5550;
+    outline: black 0px;
+    background: linear-gradient(0deg, rgb(from var(--base-color) r g b / 40%), rgb(from var(--base-color) r g b / 80%), var(--base-color));
+}
+
+#desktop_hover_description {
+    transition: opacity 0.25s, margin 0.065s;
+    display: inline-block;
+    position: absolute;
+    height: fit-content;
+    max-width: 20em;
+    background-color: var(--hover-description-color);
+    outline: 1px solid black;
+    overflow: hidden;
+    vertical-align: top;
+    pointer-events: none;
+}
+
+#desktop_hover_descriptionA {
+    display: block;
+    padding: 4px;
+    padding-bottom: 0px;
+}
+
+#desktop_hover_descriptionB {
+    display: block;
+    font-size: 80%;
+    padding: 4px;
 }
 
 /* Other */

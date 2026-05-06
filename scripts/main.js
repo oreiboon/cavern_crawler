@@ -7,29 +7,23 @@ function load_data() {
     let base_data = {
         persist: {
             currencies: {
-                research: 0,
+                research: 10,
                 prestige_points: 0
             },
             upgrades: {
 
             },
             unlocks: {
-                upgrades: false,
-                combat: false,
-                extended_upgrades: false,
-                prestige: false,
-                prestige_upgrades: false
+                upgrades: true
             },
             layers: {
                 prestige: 0
             },
             other: {
                 settings: {
-                    cool_font: true,
-                    hide_complete_upgrades: false
                 },
                 time_played: 0,
-                runs_started: 0,
+                runs_started: 1,
 
                 records: {
                     floor: 0
@@ -55,7 +49,7 @@ function load_data() {
     }
 
     if (localStorage.getItem("save_data") != null) {
-        base_data.persist = JSON.parse(localStorage.getItem("save_data"))
+        // base_data.persist = JSON.parse(localStorage.getItem("save_data"))
     }
 
     return base_data
@@ -66,911 +60,6 @@ let enemy_graphic_order = [
     "images/enemy_slime_icon.png",
     "images/enemy_skeleton_icon.png"
 ]
-
-let upgrades_list = {
-    basic: [
-        // Torch Upgrades
-        {
-            id: "torch",
-            name: "Torch",
-            description: "You should probably bring a light source with you. Slows down courage loss.",
-            effect: {
-                amount: {
-                    type: "flat",
-                    value: 0.25
-                },
-                prefix: "+",
-                suffix: "Courage/s"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "flat_constant",
-                    value: 0.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-
-            max_level: 1
-        },
-
-        {
-            id: "torch_buff",
-            name: "Torch Power",
-            description: "Make your torch shine brighter than before.. Slows down courage loss further.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.05,
-                },
-                prefix: "+",
-                suffix: " Courage/s"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 0.25,
-                    multiplier: 1.25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "torch"
-                    }
-                ]
-            },
-
-            max_level: 5
-        },
-
-        {
-            id: "torch_buff1",
-            name: "Torch Power+",
-            description: "Make your torch shine even brighter than before.. Slows down courage loss multiplicatively.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.1,
-                },
-                prefix: "-",
-                suffix: " x Courage Loss/s"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 1,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "torch_buff",
-                        amount: 5
-                    }
-                ]
-            },
-
-            max_level: 5
-        },
-
-        // Extended Upgrades
-
-        {
-            id: "swallow_inhibitions",
-            name: "Swallow your inhibitions",
-            description: "You might not want to be here, but you have something in mind here. Start with more courage.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 1,
-                },
-                prefix: "+",
-                suffix: "Courage"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 0.75,
-                    multiplier: 1.25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "torch"
-                    }
-                ]
-            },
-
-            max_level: 5
-        },
-
-        {
-            id: "basic_routine",
-            name: "Versed Routine",
-            description: "Solve your other problems first, then come try again. Start with even more courage.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 1,
-                },
-                prefix: "+",
-                suffix: "Courage"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 5,
-                    multiplier: 1.25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "swallow_inhibitions",
-                        amount: 5
-                    }
-                ]
-            },
-
-            max_level: 10
-        },
-
-        {
-            id: "careful_looking",
-            name: "Careful Looking",
-            description: "Take note of everything, even if it kind of creeps you out. Gain more Research but lose 10% more courage.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.2,
-                },
-                prefix: "+",
-                suffix: "x Research"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 1,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "torch"
-                    }
-                ]
-            },
-
-            max_level: 5
-        },
-
-        {
-            id: "growing_pace",
-            name: "Panicked Pace",
-            description: "Never too late to pick up the pace! The less courage you have, the faster you move.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.2,
-                },
-                prefix: "+",
-                suffix: "Move Speed"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 1,
-                    multiplier: 1.25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "torch"
-                    },
-                    {
-                        name: "careful_looking"
-                    }
-                ]
-            },
-
-            max_level: 5
-        },
-
-        {
-            id: "auto_delve",
-            name: "Auto. Delve",
-            description: "Hire a friend to go into the cavern for you. Beats going in there yourself.",
-            effect: {
-                amount: {
-                    type: "flat_constant",
-                    value: "Automatic Delving",
-                },
-                prefix: "",
-                suffix: ""
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "flat_constant",
-                    value: 25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "extended_upgrades"
-                ]
-            },
-
-            max_level: 1
-        },
-
-        // Extended Upgrades
-
-        {
-            id: "compound_research",
-            name: "Compounding Discoveries",
-            description: "The deeper you go, the more everything before makes sense. Earn 10% more research per floor you've passed this run.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.1,
-                },
-                prefix: "+",
-                suffix: "x Research"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 10,
-                    multiplier: 1.75
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "extended_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-
-        {
-            id: "compound_courage",
-            name: "Mental Endurance",
-            description: "It's mindnumbing how many times you've gone through the caverns. Lose courage slower.",
-            effect: {
-                amount: {
-                    type: "multiply_effect",
-                    value: 0.8,
-                    multiplier: 0.8
-                },
-                prefix: "",
-                suffix: "x Courage Loss"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 20,
-                    multiplier: 1.25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "extended_upgrades"
-                ]
-            },
-
-            max_level: 20
-        },
-    ],
-
-    combat: [
-        {
-            id: "train_endurance",
-            name: "Endurance Training",
-            description: "Better get it in now. Increases health.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 1,
-                },
-                prefix: "+",
-                suffix: "Health"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 5,
-                    multiplier: 1.25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "combat"
-                ]
-            },
-
-            max_level: 25
-        },
-
-        {
-            id: "train_agility",
-            name: "Agility Training",
-            description: "Make fights go quicker. Increases attack speed.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.1,
-                },
-                prefix: "+",
-                suffix: "x Attack Speed"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 5,
-                    multiplier: 1.25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "combat"
-                ]
-            },
-
-            max_level: 25
-        },
-
-        {
-            id: "combat_sword",
-            name: "Prepare Sword",
-            description: "Best be prepared for the next fight. Slows down courage loss by 10% and increases attack power.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 1,
-                },
-                prefix: "+",
-                suffix: "Attack"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 5,
-                    multiplier: 1.25
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "combat"
-                ]
-            },
-
-            max_level: 10
-        },
-
-        {
-            id: "enhance_sword",
-            name: "Enhance Sword",
-            description: "Work on making your blade the best it can be. Further increases attack power.",
-            effect: {
-                amount: {
-                    type: "multiply_effect",
-                    value: 2,
-                    multiplier: 1.25
-                },
-                prefix: "+",
-                suffix: "Attack"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 100,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "combat_sword",
-                        amount: 10
-                    }
-                ],
-                unlocks: [
-                    "combat",
-                    "prestige_upgrades"
-                ]
-            },
-
-            max_level: 20
-        },
-
-        {
-            id: "combat_armor",
-            name: "Prepare Armor",
-            description: "Would be good to be able to take a few hits. Slows down courage loss by 10% and increases defense.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 1,
-                },
-                prefix: "+",
-                suffix: "Defense"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 10,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "combat"
-                ]
-            },
-
-            max_level: 10
-        },
-
-        {
-            id: "enhance_armor",
-            name: "Enhance Armor",
-            description: "Toughen up your armor. Further increases defense.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 2
-                },
-                prefix: "+",
-                suffix: "Defense"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 600,
-                    multiplier: 1.75
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "combat_armor",
-                        amount: 10
-                    }
-                ],
-                unlocks: [
-                    "combat",
-                    "prestige_upgrades"
-                ]
-            },
-
-            max_level: 20
-        },
-
-        {
-            id: "combat_boots",
-            name: "Prepare Boots",
-            description: "Would be good to ease the foot pain. Slows down courage loss by 10% and increases move speed.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.1,
-                },
-                prefix: "+",
-                suffix: "x Move Speed"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 5,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "combat"
-                ]
-            },
-
-            max_level: 10
-        },
-
-        {
-            id: "enemy_bounty",
-            name: "Bounty Hunter",
-            description: "If you're gonna kill things, you might as well understand them better. Gain research on kill.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.5,
-                },
-                prefix: "+",
-                suffix: " Research/kill"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 7.5,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "combat"
-                ]
-            },
-
-            max_level: 10
-        },
-
-        {
-            id: "slow_recover",
-            name: "Slow Recovery",
-            description: "Regenerate health when outside of combat.",
-            effect: {
-                amount: {
-                    type: "multiply_effect",
-                    value: 0.125,
-                    multiplier: 1.5
-                },
-                prefix: "+",
-                suffix: "Health/s"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 15,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "combat",
-                    "extended_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-
-        {
-            id: "well_cheers",
-            name: "Well cheers!",
-            description: "(Locks Feelin' fine)<br>As long as your spirit's up, nothing can stop you. While courage is above 50%, lose 25% less courage and regenerate health.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.05,
-                },
-                prefix: "+",
-                suffix: "Health/s"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 10,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "feeling_fine",
-                        amount: -1
-                    }
-                ],
-                unlocks: [
-                    "combat",
-                    "extended_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-
-        {
-            id: "feeling_fine",
-            name: "Feelin' fine",
-            description: "(Locks Well cheers!)<br>I'll just walk it off. While health is above 50%, gain 1 defense and regenerate courage.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.05,
-                },
-                prefix: "+",
-                suffix: "Courage/s"
-            },
-
-            cost: {
-                currency: "research",
-                amount: {
-                    type: "multiply",
-                    value: 12.5,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Research"
-            },
-            
-            requirements: {
-                upgrades: [
-                    {
-                        name: "well_cheers",
-                        amount: -1
-                    }
-                ],
-                unlocks: [
-                    "combat",
-                    "extended_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-    ],
-    prestige: [
-        {
-            id: "prestige_research",
-            name: "P-Research",
-            description: "Gain significantly more research.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.5,
-                },
-                prefix: "+",
-                suffix: "x Research"
-            },
-
-            cost: {
-                currency: "prestige_points",
-                amount: {
-                    type: "increment_cost",
-                    value: 1
-                },
-                prefix: "",
-                suffix: "Prestige Points"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "prestige_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-        {
-            id: "prestige_courage",
-            name: "P-Courage",
-            description: "Start with significantly more courage.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 0.25,
-                },
-                prefix: "+",
-                suffix: "x Courage"
-            },
-
-            cost: {
-                currency: "prestige_points",
-                amount: {
-                    type: "increment_cost",
-                    value: 1
-                },
-                prefix: "",
-                suffix: "Prestige Points"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "prestige_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-        {
-            id: "prestige_courage_loss",
-            name: "P-Courage Retention",
-            description: "Lose courage significantly slower.",
-            effect: {
-                amount: {
-                    type: "multiply_effect",
-                    value: 0.875,
-                    multiplier: 0.875
-                },
-                prefix: "",
-                suffix: "x Courage Loss"
-            },
-
-            cost: {
-                currency: "prestige_points",
-                amount: {
-                    type: "increment_cost",
-                    value: 1
-                },
-                prefix: "",
-                suffix: "Prestige Points"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "prestige_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-        {
-            id: "prestige_health",
-            name: "P-Health",
-            description: "Gain exponentially more health.",
-            effect: {
-                amount: {
-                    type: "multiply_effect",
-                    value: 2,
-                    multiplier: 1.625
-                },
-                prefix: "+",
-                suffix: " Health"
-            },
-
-            cost: {
-                currency: "prestige_points",
-                amount: {
-                    type: "increment_cost",
-                    value: 1
-                },
-                prefix: "",
-                suffix: "Prestige Points"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "prestige_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-        {
-            id: "prestige_defense",
-            name: "P-Defense",
-            description: "Gain more defense.",
-            effect: {
-                amount: {
-                    type: "increment",
-                    value: 1
-                },
-                prefix: "+",
-                suffix: " Defense"
-            },
-
-            cost: {
-                currency: "prestige_points",
-                amount: {
-                    type: "multiply",
-                    value: 2,
-                    multiplier: 1.5
-                },
-                prefix: "",
-                suffix: "Prestige Points"
-            },
-            
-            requirements: {
-                unlocks: [
-                    "prestige_upgrades"
-                ]
-            },
-
-            max_level: 10
-        },
-    ]
-}
 
 function can_afford_upgrade(data, currency, price) {
     return data.persist.currencies[currency] >= price
@@ -1024,13 +113,40 @@ function is_upgrade_available(data, upgrade_data) {
     return upgrade_available
 }
 
+function evaluate_hover_text(data, value) {
+    let effect_text = ""
+    let current_level = data.persist.upgrades[value.id] || 0
+    value.effect.forEach((definition, _index) => {
+        effect_text += "<br>"
+        let current_value = evaluate_dynamic_amount(definition.amount, current_level)
+        let next_value = evaluate_dynamic_amount(definition.amount, current_level + 1)
+        if (typeof(current_value) == "number") {
+            effect_text += definition.prefix + current_value.toFixed(2)
+        } else {
+            effect_text += definition.prefix + current_value
+        }
+
+        if (next_value != current_value && current_level < value.max_level) {
+            if (typeof(next_value) == "number") {
+                effect_text += " > " + next_value.toFixed(2)
+            } else {
+                effect_text += " > " + next_value
+            }
+        }
+        effect_text += " " + definition.suffix
+    })
+
+    let cost_text = value.cost.prefix + (-evaluate_dynamic_amount(value.cost.amount, current_level).toFixed(2)) + " " + value.cost.suffix
+
+    document.getElementById("desktop_hover_descriptionA").innerHTML = `<b>${value.name} (${data.persist.upgrades[value.id] || 0}/${value.max_level})</b>`
+    document.getElementById("desktop_hover_descriptionB").innerHTML = `${value.description}<br><br><b>Effect: </b>${effect_text}<br><br><b>Cost: </b>${cost_text}`
+}
+
 function evaluate_upgrade_button(data, upgrade) {
     let upgrade_available = is_upgrade_available(data, upgrade.upgrade_data)
 
     if (upgrade_available == true) {
         upgrade.base_button.style.setProperty("display", "block")
-
-        let upgrade_level = upgrade.base_button.children[1]
 
         let max_level = upgrade.upgrade_data.max_level
         let current_level = 0
@@ -1040,32 +156,8 @@ function evaluate_upgrade_button(data, upgrade) {
         if (current_level >= max_level) {
             upgrade.base_button.setAttribute("_maxxed", "true")
         }
-        let upgrade_level_text = "(" + current_level.toString() + "/" + max_level.toString() + ")"
-        if (upgrade_level.innerHTML != upgrade_level_text) {
-            upgrade_level.innerHTML = upgrade_level_text
-        }
 
-        let upgrade_effect = upgrade.base_button.children[3]
-        let dynamic_eval = evaluate_dynamic_amount(upgrade.upgrade_data.effect.amount, current_level)
-        let upgrade_effect_text = ""
-        if (typeof(dynamic_eval) == "number") {
-            upgrade_effect_text = "Effect: " + upgrade.upgrade_data.effect.prefix + dynamic_eval.toFixed(2) + " " + upgrade.upgrade_data.effect.suffix
-        } else {
-            upgrade_effect_text = "Effect: " + upgrade.upgrade_data.effect.prefix + dynamic_eval + " " + upgrade.upgrade_data.effect.suffix
-        }
-        if (upgrade_effect.innerHTML != upgrade_effect_text) {
-            upgrade_effect.innerHTML = upgrade_effect_text
-        }
-
-        let upgrade_cost_display = upgrade.base_button.children[5]
-        let upgrade_cost = evaluate_dynamic_amount(upgrade.upgrade_data.cost.amount, current_level).toFixed(2)
-        let upgrade_cost_text = upgrade.upgrade_data.cost.prefix + (-upgrade_cost) + " " + upgrade.upgrade_data.cost.suffix
-        
-        if (upgrade_cost_display.innerHTML != upgrade_cost_text) {
-            upgrade_cost_display.innerHTML = upgrade_cost_text
-        }
-
-        if (can_afford_upgrade(data, upgrade.upgrade_data.cost.currency, upgrade_cost) && current_level < max_level) {
+        if (can_afford_upgrade(data, upgrade.upgrade_data.cost.currency, evaluate_dynamic_amount(upgrade.upgrade_data.cost.amount, current_level)) && current_level < max_level) {
             if (upgrade.base_button.getAttribute("disabled") != null) {
                 upgrade.base_button.removeAttribute("disabled")
             }
@@ -1091,43 +183,11 @@ function create_upgrade_buttons(data, list, category) {
         return_table.base_button.id = category + "_" + value.id
         return_table.base_button.style.setProperty("order", index)
 
-        let upgrade_name = document.createElement("div")
-        upgrade_name.className = "upgrade_title"
-        upgrade_name.innerHTML = value.name
-        return_table.base_button.appendChild(upgrade_name)
+        let upgrade_icon = document.createElement("img")
+        upgrade_icon.className = "upgrade_icon"
+        upgrade_icon.src = "images/" + value.icon
 
-        let upgrade_level = document.createElement("div")
-        upgrade_level.className = "upgrade_level"
-
-        let max_level = value.max_level
-        let current_level = 0
-        if (data.persist.upgrades[value.id] != null) {
-            current_level = data.persist.upgrades[value.id]
-        }
-        upgrade_level.innerHTML = "(" + current_level.toString() + "/" + max_level.toString() + ")"
-        return_table.base_button.appendChild(upgrade_level)
-
-        let upgrade_desc = document.createElement("div")
-        upgrade_desc.className = "upgrade_description"
-        upgrade_desc.innerHTML = value.description
-        return_table.base_button.appendChild(upgrade_desc)
-
-        let upgrade_effect = document.createElement("div")
-        upgrade_effect.className = "upgrade_effect"
-
-        let dynamic_eval = evaluate_dynamic_amount(value.effect.amount, current_level)
-        if (typeof(dynamic_eval) == "number") {
-            upgrade_effect.innerHTML = "Effect: " + value.effect.prefix + dynamic_eval.toFixed(2) + " " + value.effect.suffix
-        } else {
-            upgrade_effect.innerHTML = "Effect: " + value.effect.prefix + dynamic_eval + " " + value.effect.suffix
-        }
-        return_table.base_button.appendChild(upgrade_effect)
-        return_table.base_button.appendChild(document.createElement("br"))
-
-        let upgrade_cost = document.createElement("div")
-        upgrade_cost.className = "upgrade_cost"
-        upgrade_cost.innerHTML = value.cost.prefix + (-evaluate_dynamic_amount(value.cost.amount, current_level).toFixed(2)) + " " + value.cost.suffix
-        return_table.base_button.appendChild(upgrade_cost)
+        return_table.base_button.appendChild(upgrade_icon)
 
         return_table.base_button.addEventListener("click", (_self, _event) => {
             evaluate_upgrade_button(data, return_table)
@@ -1146,6 +206,7 @@ function create_upgrade_buttons(data, list, category) {
                     data.persist.upgrades[return_table.upgrade_data.id] = 1
                 }
 
+                evaluate_hover_text(data, value)
                 evaluate_upgrade_button(data, return_table)
             }
         })
@@ -1154,6 +215,17 @@ function create_upgrade_buttons(data, list, category) {
         document.getElementById("upgrade_container_" + category).appendChild(return_table.base_button)
 
         evaluate_upgrade_button(data, return_table)
+        return_table.base_button.addEventListener("mouseover", function() {
+            document.getElementById("desktop_hover_description").style.opacity = "100%"
+            
+            evaluate_hover_text(data, value)
+        })
+
+        return_table.base_button.addEventListener("mouseout", function() {
+            document.getElementById("desktop_hover_description").style.opacity = "0%"
+            //document.getElementById("desktop_hover_descriptionA").innerHTML = ""
+            //document.getElementById("desktop_hover_descriptionB").innerHTML = ""
+        })
     })
 }
 
@@ -1288,7 +360,6 @@ function end_run(data) {
 
     data.persist.currencies.research += calculate_research_gain(data)
 
-    document.getElementById("enemy_stats_container").style.display = "none"
     document.getElementById("active_run_container").style.display = "none"
     document.getElementById("start_run_button").removeAttribute("disabled")
 }
@@ -1305,7 +376,7 @@ function game_tick(data) {
 
     if (last_save > 15) {
         last_save -= 15
-        localStorage.setItem("save_data", JSON.stringify(data.persist))
+        // localStorage.setItem("save_data", JSON.stringify(data.persist))
     }
 
     if (data.non_persist.run_active == true) {
@@ -1385,9 +456,7 @@ function game_tick(data) {
                         data.non_persist.run.enemy.stats.health -= calculate_damage_taken(calculate_attack(data), data.non_persist.run.enemy.stats.defense)
                     }
 
-                    if (data.non_persist.run.enemy.stats.health <= 0) {
-                        document.getElementById("enemy_stats_container").style.display = "none"
-
+                    if (data.non_persist.run.enemy.stats.health >= 0) {
                         data.non_persist.run.enemy_kills += 1
 
                         data.non_persist.run.in_combat = false
@@ -1427,7 +496,7 @@ function display_tick(data) {
     if (data.persist.other.settings.cool_font) {
         document.getElementById("main-style").innerHTML = "* {font-family: 'Charm'};"
     } else {
-        document.getElementById("main-style").innerHTML = "* {font-family: 'Lucida Console'};"
+        document.getElementById("main-style").innerHTML = "* {font-family: 'Arial'};"
     }
 
     document.getElementById("last_save_display").innerHTML = "Last saved " + last_save.toFixed(1).toString() + "s ago."
@@ -1435,9 +504,6 @@ function display_tick(data) {
     document.getElementById("select_tab_prestige").style.display = (data.persist.unlocks.prestige == true? "block" : "none");
 
     document.getElementById("select_tab_upgrades").style.display = (data.persist.unlocks.upgrades == true? "block" : "none");
-
-    document.getElementById("upgrade_tab_prestige").style.display = (data.persist.unlocks.prestige_upgrades == true? "block" : "none");
-    document.getElementById("upgrade_tab_combat").style.display = (data.persist.unlocks.combat == true? "block" : "none");
 
     document.getElementById("player_stats_container").style.display = (data.persist.other.runs_started > 0? "inline-block" : "none");
 
@@ -1460,26 +526,16 @@ function display_tick(data) {
     }
 
     if (data.persist.unlocks.upgrades) {
-        document.getElementById("research_display").innerHTML = "Research: " + data.persist.currencies.research.toFixed(2).toString()
+        document.getElementById("research_display").innerHTML = "⚛ " + data.persist.currencies.research.toFixed(2).toString()
         document.getElementById("currency_display").style.height = "24px";
     } else {
         document.getElementById("currency_display").style.height = "0px";
     }
 
-    document.getElementById("health_bar").style.display = (data.persist.unlocks.combat? "block" : "none");
-    document.getElementById("player_attack").style.display = (data.persist.unlocks.combat? "block" : "none");
-    document.getElementById("player_defense").style.display = (data.persist.unlocks.combat? "block" : "none");
-    document.getElementById("player_attack_speed").style.display = (data.persist.unlocks.combat? "block" : "none");
-
-    document.getElementById("player_attack").innerHTML = "Attack: " + calculate_attack(data).toFixed(1).toString()
-    document.getElementById("player_defense").innerHTML = "Defense: " + calculate_defense(data).toFixed(1).toString()
-    document.getElementById("player_attack_speed").innerHTML = "Attack Speed: " + calculate_attack_speed(data).toFixed(2).toString() + "x"
-    document.getElementById("player_speed").innerHTML = "Move Speed: " + calculate_move_speed(data).toFixed(2).toString() + "x"
-
     document.querySelector("#courage_bar > .bar_text").innerHTML = "Courage: " + data.non_persist.run.character_stats.courage.toFixed(1).toString()  + "/" + data.non_persist.run.character_stats.max_courage.toFixed(0).toString()
     if (data.non_persist.run_active) {
         let research_gain = calculate_research_gain(data)
-        document.getElementById("research_display").innerHTML = "Research: " + data.persist.currencies.research.toFixed(2).toString() + " (+" + research_gain.toFixed(2).toString() + ")"
+        document.getElementById("research_display").innerHTML = "⚛ " + data.persist.currencies.research.toFixed(2).toString() + " (+" + research_gain.toFixed(2).toString() + ")"
 
         let current_courage_loss = calculate_courage_change(data)
 
@@ -1487,19 +543,6 @@ function display_tick(data) {
     }
     
     document.querySelector("#courage_bar > .fill_bar").style.setProperty("--percent", data.non_persist.run.character_stats.courage / data.non_persist.run.character_stats.max_courage)
-
-    document.querySelector("#health_bar > .bar_text").innerHTML = "Health: " + data.non_persist.run.character_stats.health.toFixed(1).toString()  + "/" + data.non_persist.run.character_stats.max_health.toFixed(1).toString()
-    document.querySelector("#health_bar > .fill_bar").style.setProperty("--percent", data.non_persist.run.character_stats.health / data.non_persist.run.character_stats.max_health)
-
-    document.getElementById("enemy_stats_container").style.display = (data.non_persist.run.in_combat? "inline-block" : "none");
-    if (data.non_persist.run.enemy) {
-        document.getElementById("enemy_attack").innerHTML = "Attack: " + data.non_persist.run.enemy.stats.attack.toFixed(1).toString()
-        document.getElementById("enemy_defense").innerHTML = "Defense: " + data.non_persist.run.enemy.stats.defense.toFixed(1).toString()
-        document.getElementById("enemy_speed").innerHTML = "Attack Speed: " + data.non_persist.run.enemy.stats.speed.toFixed(2).toString() + "x"
-
-        document.querySelector("#enemy_health_bar > .bar_text").innerHTML = "Health: " + data.non_persist.run.enemy.stats.health.toFixed(1).toString()  + "/" + data.non_persist.run.enemy.stats.max_health.toFixed(1).toString()
-        document.querySelector("#enemy_health_bar > .fill_bar").style.setProperty("--percent", data.non_persist.run.enemy.stats.health / data.non_persist.run.enemy.stats.max_health)
-    }
 }
 
 function attempt_prestige(data) {
@@ -1542,15 +585,9 @@ function start() {
     let data = load_data()
 
     create_upgrade_buttons(data, upgrades_list.basic, "basic")
-    create_upgrade_buttons(data, upgrades_list.combat, "combat")
-    create_upgrade_buttons(data, upgrades_list.prestige, "prestige")
 
     if (data.persist.unlocks.upgrades == true) {
         document.getElementById("select_tab_upgrades").style.display = "block";
-    }
-
-    if (data.persist.unlocks.combat == true) {
-        document.getElementById("upgrade_tab_combat").style.display = "block";
     }
 
     if (data.persist.other.records.floor > 0) {
@@ -1593,4 +630,8 @@ function start() {
     setInterval(display_tick, 1000/20, data)
 }
 
+document.addEventListener("mousemove", function(event) {
+    document.getElementById("desktop_hover_description").style.marginLeft = event.pageX
+    document.getElementById("desktop_hover_description").style.marginTop = event.pageY
+})
 onload = start
