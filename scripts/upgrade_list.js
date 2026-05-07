@@ -19,7 +19,7 @@ let upgrades_list = {
                 currency: "research",
                 amount: {
                     type: "flat_constant",
-                    value: 0.5
+                    value: 1
                 },
                 prefix: "",
                 suffix: "⚛"
@@ -45,7 +45,7 @@ let upgrades_list = {
                 currency: "research",
                 amount: {
                     type: "multiply",
-                    value: 0.25,
+                    value: 0.5,
                     multiplier: 1.2
                 },
                 prefix: "",
@@ -81,7 +81,7 @@ let upgrades_list = {
                 currency: "research",
                 amount: {
                     type: "multiply",
-                    value: 1,
+                    value: 2,
                     multiplier: 1.25
                 },
                 prefix: "",
@@ -117,7 +117,7 @@ let upgrades_list = {
                 currency: "research",
                 amount: {
                     type: "multiply",
-                    value: 1.25,
+                    value: 2.5,
                     multiplier: 1.25
                 },
                 prefix: "",
@@ -163,7 +163,7 @@ let upgrades_list = {
                 currency: "research",
                 amount: {
                     type: "multiply",
-                    value: 1.5,
+                    value: 3,
                     multiplier: 1.25
                 },
                 prefix: "",
@@ -180,6 +180,105 @@ let upgrades_list = {
             },
 
             max_level: 5
-        }
+        },
+        {
+            id: "strength_upgrade",
+            name: "Strength upgrade",
+            description: "this is the basic strength upgrade write description later",
+            icon: "upgrades/base_torch.png",
+            effect: [{
+                amount: {
+                    type: "increment",
+                    value: 1
+                },
+                prefix: "+",
+                suffix: "Strength"
+            }],
+
+            cost: {
+                currency: "research",
+                amount: {
+                    type: "multiply",
+                    value: 5,
+                    multiplier: 1.5
+                },
+                prefix: "",
+                suffix: "⚛"
+            },
+
+            requirements: {
+                unlocks: [
+                    "skill_checks"
+                ]
+            },
+
+            max_level: 5
+        },
+        {
+            id: "patience_upgrade",
+            name: "Patience upgrade",
+            description: "this is the basic patience upgrade write description later",
+            icon: "upgrades/base_torch.png",
+            effect: [{
+                amount: {
+                    type: "increment",
+                    value: 1
+                },
+                prefix: "+",
+                suffix: "Patience"
+            }],
+
+            cost: {
+                currency: "research",
+                amount: {
+                    type: "multiply",
+                    value: 5,
+                    multiplier: 1.5
+                },
+                prefix: "",
+                suffix: "⚛"
+            },
+
+            requirements: {
+                unlocks: [
+                    "skill_checks"
+                ]
+            },
+
+            max_level: 5
+        },
+        {
+            id: "intelligence_upgrade",
+            name: "Tinkering upgrade",
+            description: "this is the basic tinkering upgrade write description later",
+            icon: "upgrades/base_torch.png",
+            effect: [{
+                amount: {
+                    type: "increment",
+                    value: 1
+                },
+                prefix: "+",
+                suffix: "Tinkering"
+            }],
+
+            cost: {
+                currency: "research",
+                amount: {
+                    type: "multiply",
+                    value: 5,
+                    multiplier: 1.5
+                },
+                prefix: "",
+                suffix: "⚛"
+            },
+
+            requirements: {
+                unlocks: [
+                    "skill_checks"
+                ]
+            },
+
+            max_level: 5
+        },
     ]
 }

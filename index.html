@@ -18,7 +18,7 @@
 
             <div class="seperator"></div>
 
-            <div id="game_tab_select_container">
+            <div class="game_tab_select_container">
                 <button id="select_tab_main" class="game_tab_select" data-selected=true onclick="changetab('main')">Main</button>
                 <button id="select_tab_upgrades" class="game_tab_select" style="display: none;" onclick="changetab('upgrades')">Upgrades</button>
                 <button id="select_tab_prestige" class="game_tab_select" style="display: block;" onclick="changetab('prestige')">Prestige</button>
@@ -41,23 +41,12 @@
                     <div id="floor_record_text" style="text-align: center;"></div>
                     <div id="active_run_container" style="display: none; padding-bottom: 4px;">
                         <div id="active_run_info" style="text-align: center; height: 24px;">Floor 1 - 0/10</div>
-                        <div id="dungeon_container">
-                            <span id="run_player_icon" class="dungeon_entity_icon" style="--progress: 0;">
-                                <img src="images/player_icon.png">
-                            </span>
-                            <span id="enemy_container"></span>
-                            <span id="dungeon_tiles">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                                <img class="dungeon_background" src="images/dungeon_wall.png">
-                            </span>
+                        <canvas id="dungeon_container" width="768px" height="64px">
+                            your browser doesn't support canvases? seriously? i'm not mad cause you don't need it but like... really?
+                        </canvas>
+                        <div id="image_asset_container" _hidden="true">
+                            <img id="IMAGE_dungeon_bg1" src="images/dungeon/base_dungeon_bg.png">
+                            <img id="IMAGE_player_sprite" src="images/dungeon/base_player_walker.png">
                         </div>
                     </div>
                     <div class="seperator"></div>
@@ -67,12 +56,25 @@
                                 <div class="bar_text" style="position: absolute; margin-left: 4px; margin-top: 4px;">Courage: 10/10</div>
                                 <div class="fill_bar" style="--percent: 0.5;"></div>
                             </div>
+                            <div class="fill_bar_base" id="action_health_bar">
+                                <div class="bar_text" style="position: absolute; margin-left: 4px; margin-top: 4px;">Action (10.0s)</div>
+                                <div class="fill_bar" style="--percent: 0.5;"></div>
+                            </div>
+                            <div id="player_skill_stats">
+                                <div class="seperator"></div>
+                                <div class="game_tab_select_container" style="height: 20px;">
+                                    <div class="stat_info" id="player_str_stat">Strength: 0</div>
+                                    <div class="stat_info" id="player_pat_stat">Patience: 0</div>
+                                    <div class="stat_info" id="player_int_stat">Tinkering: 0</div>
+                                </div>
+                                <div class="seperator"></div>
+                            </div>
                         </div>
                     </div>
                 </div>
                 
                 <div id="tab_upgrades" style="display: none;">
-                     <div id="game_tab_select_container">
+                     <div class="game_tab_select_container">
                         <button id="upgrade_tab_basic" class="game_tab_select" data-selected=true onclick="changeupgradetab('basic')">Basic</button>
                     </div>
                     

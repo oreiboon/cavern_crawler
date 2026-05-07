@@ -12,66 +12,46 @@ function calculate_courage_change(data) {
     return add_courage_loss
 }
 
-function calculate_health_change(data) {
-    let health_change = 0
+function calculate_action_speed(data) {
+    let action_speed = 1
 
-    // Well cheers!
-    if (data.persist.upgrades.well_cheers != null && (data.non_persist.run.character_stats.courage / data.non_persist.run.character_stats.max_courage) > 0.5) {
-        health_change += 0.05 * data.persist.upgrades.well_cheers
+    if (data.non_persist.run.enemy) {
+        if (data.non_persist.run.enemy.action_type == "strength") {
+            action_speed *= 1 + (data.non_persist.run.character_stats.strength - 1) / 5
+        }
+        if (data.non_persist.run.enemy.action_type == "patience") {
+            action_speed *= 1 + (data.non_persist.run.character_stats.patience - 1) / 5
+        }
+        if (data.non_persist.run.enemy.action_type == "intelligence") {
+            action_speed *= 1 + (data.non_persist.run.character_stats.intelligence - 1) / 5
+        }
     }
 
-    health_change += (data.persist.upgrades.slow_recover > 0 && data.non_persist.run.in_combat == false? 0.125 * Math.pow(1.5, data.persist.upgrades.slow_recover) : 0)
-
-    return health_change
+    return action_speed
 }
 
-function calculate_health(data) {
-    let return_health = 5
+function calculate_strength(data) {
+    let return_str = 1
 
-    // Endurance Training
-    return_health += (data.persist.upgrades.train_endurance > 0? data.persist.upgrades.train_endurance : 0)
+    return_str += (data.persist.upgrades.strength_upgrade? data.persist.upgrades.strength_upgrade : 0)
 
-    return_health += (data.persist.upgrades.prestige_health > 0? Math.pow(2, data.persist.upgrades.prestige_health) : 0)
-
-    return return_health
+    return return_str
 }
 
-function calculate_defense(data) {
-    let return_defense = 0
+function calculate_patience(data) {
+    let return_patience = 1
 
-    // Combat Armor
-    return_defense += (data.persist.upgrades.combat_armor > 0? data.persist.upgrades.combat_armor : 0)
+    return_patience += (data.persist.upgrades.patience_upgrade? data.persist.upgrades.patience_upgrade : 0)
 
-    // Feelin' fine
-    if (data.persist.upgrades.feeling_fine != null && (data.non_persist.run.character_stats.health / data.non_persist.run.character_stats.max_health) > 0.5) {
-        return_defense += 1
-    }
-
-    return_defense += (data.persist.upgrades.prestige_defense > 0? data.persist.upgrades.prestige_defense : 0)
-
-    return_defense += (data.persist.upgrades.enhance_armor > 0? 2 * data.persist.upgrades.enhance_armor : 0)
-
-    return return_defense
+    return return_patience
 }
 
-function calculate_attack(data) {
-    let return_attack = 1
+function calculate_intelligence(data) {
+    let return_int = 1
 
-    // Combat Sword
-    return_attack += (data.persist.upgrades.combat_sword > 0? data.persist.upgrades.combat_sword : 0)
+    return_int += (data.persist.upgrades.intelligence_upgrade? data.persist.upgrades.intelligence_upgrade : 0)
 
-    return_attack += (data.persist.upgrades.enhance_sword > 0? 2 * Math.pow(1.25, data.persist.upgrades.enhance_sword) : 0)
-
-    return return_attack
-}
-
-function calculate_attack_speed(data) {
-    let return_attack_speed = 1
-
-    // Agility Training
-    return_attack_speed += (data.persist.upgrades.train_agility > 0? (0.1 * data.persist.upgrades.train_agility) : 0)
-
-    return return_attack_speed
+    return return_int
 }
 
 function calculate_move_speed(data) {
@@ -80,13 +60,13 @@ function calculate_move_speed(data) {
     // Pick up the pace!
     return_move_speed += (data.persist.upgrades.pickup_pace > 0? (0.15 * data.persist.upgrades.pickup_pace) * (1 - data.non_persist.run.character_stats.courage / data.non_persist.run.character_stats.max_courage) : 0)
 
-    return data.non_persist.run.in_combat? 0 : return_move_speed
+    return data.non_persist.run.in_combat? 0 : return_move_speed * 4
 }
 
 function calculate_research_gain(data) {
     let run_data = data.non_persist.run
 
-    let base_research_gain = (run_data.floor - 1) + run_data.progress / 10
+    let base_research_gain = run_data.progress * 0.5
 
     // Careful Looking
     base_research_gain *= (data.persist.upgrades.careful_looking > 0? 1 + 0.2 * data.persist.upgrades.careful_looking : 1)
@@ -132,8 +112,9 @@ function calculate_player_stats(data) {
     data.non_persist.run.character_stats.max_courage = calculate_start_courage(data)
     data.non_persist.run.character_stats.courage = data.non_persist.run.character_stats.max_courage
 
-    data.non_persist.run.character_stats.max_health = calculate_health(data)
-    data.non_persist.run.character_stats.health = data.non_persist.run.character_stats.max_health
+    data.non_persist.run.character_stats.strength = calculate_strength(data)
+    data.non_persist.run.character_stats.patience = calculate_patience(data)
+    data.non_persist.run.character_stats.intelligence = calculate_intelligence(data)
 }
 
 function calculate_prestige_reward(data) {

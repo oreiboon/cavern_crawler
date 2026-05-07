@@ -5,7 +5,7 @@
   src: url("fonts/Charm-Regular.ttf");
 }
 
-*{
+*   {
     color: #FFFFFF;
     text-shadow: #00000088 2px 2px 3px;
     font-size: 16px;
@@ -19,6 +19,14 @@
     --default-radius: 2px;
 }
 
+*[_hidden = "true"] {
+    display: none;
+}
+
+*[_flashing = "true"] {
+    animation: flashing_outline 1s infinite;
+}
+
 html {
     background-color: var(--page-background-color);
     overflow: hidden;
@@ -26,7 +34,7 @@ html {
 
 button {
     transition: background 0.25s, opacity 0.25s, color 0.25s;
-    background: linear-gradient(0deg, rgb(from var(--button-normal-color) r g b / 40%), rgb(from var(--button-normal-color) r g b / 80%), var(--button-normal-color));
+    background: linear-gradient(0deg, rgb(from var(--button-normal-color) r g b / 40%), rgb(from var(--button-normal-color) r g b / 80%), var(--button-normal-color), rgb(from var(--button-normal-color) r g b / 90%));
 
     border: none;
     border-radius: var(--default-radius);
@@ -111,6 +119,7 @@ div > .fill_bar {
     margin: 4px;
 
     border-radius: var(--default-radius);
+    overflow: hidden;
 }
 
 .upgrade_button[_maxxed=true] {
@@ -169,15 +178,14 @@ div > .fill_bar {
 }
 
 .upgrade_icon {
-    width: 100%;
+    display: block;
+    height: calc(100% - 6px);
     aspect-ratio: 1;
     /* filter: blur(2px);
     opacity: 50%; */
 }
 
-/* ID Styles */
-
-#game_tab_select_container {
+.game_tab_select_container {
     display: flex;
     justify-content: center;
 
@@ -187,13 +195,27 @@ div > .fill_bar {
     padding-bottom: 4px;
 }
 
+.stat_info {
+    width: 20%;
+    height: 100%;
+    text-align: center;
+
+    border-radius: var(--default-radius);
+    outline: 1px solid black;
+
+    margin-left: 4px;
+    margin-right: 4px;
+}
+
+/* ID Styles */
+
 #main_div {
+    align-self: center;
     position: absolute;
     order: 1;
-    margin-left: calc(50% - 384px);
-    margin-right: calc(50% - 384px);
 
     width: 768px;
+    max-width: 100vw;
 
     border-radius: var(--default-radius);
     background-color: #00000000;
@@ -220,16 +242,11 @@ div > .fill_bar {
 }
 
 #dungeon_container {
-    display: inline-flex;
-}
-
-#dungeon_tiles {
-    order: 1000;
-    display: inline-flex;
-    justify-content: center;
+    display: block;
     width: 100%;
-    height: 64px;
-    padding-left: 64px;
+    aspect-ratio: 12;
+    background-color: white;
+    mask: linear-gradient(to right, transparent, black, transparent)
 }
 
 #currency_display {
@@ -278,8 +295,42 @@ div > .fill_bar {
 #courage_bar > .fill_bar {
     --base-color: #8E5550;
     outline: black 0px;
-    background: linear-gradient(0deg, rgb(from var(--base-color) r g b / 40%), rgb(from var(--base-color) r g b / 80%), var(--base-color));
+    background: linear-gradient(0deg, rgb(from var(--base-color) r g b / 60%), rgb(from var(--base-color) r g b / 80%), var(--base-color));
 }
+
+#action_health_bar {
+    width: 100%;
+    height: 24px;
+
+    background-color: var(--bar-background-color);
+    border-radius: var(--default-radius);
+}
+
+#action_health_bar > .fill_bar {
+    --base-color: #4e77ad;
+    outline: black 0px;
+    background: linear-gradient(0deg, rgb(from var(--base-color) r g b / 60%), rgb(from var(--base-color) r g b / 80%), var(--base-color));
+}
+
+#player_skill_stats {
+    transition: opacity 1s;
+}
+
+#player_str_stat {
+    --base-color: #9c2946;
+    background: linear-gradient(0deg, rgb(from var(--base-color) r g b / 60%), rgb(from var(--base-color) r g b / 80%), var(--base-color));
+}
+
+#player_pat_stat {
+    --base-color: #5e6d94;
+    background: linear-gradient(0deg, rgb(from var(--base-color) r g b / 60%), rgb(from var(--base-color) r g b / 80%), var(--base-color));
+}
+
+#player_int_stat {
+    --base-color: #8d7526;
+    background: linear-gradient(0deg, rgb(from var(--base-color) r g b / 60%), rgb(from var(--base-color) r g b / 80%), var(--base-color));
+}
+
 
 #desktop_hover_description {
     transition: opacity 0.25s, margin 0.065s;
@@ -323,5 +374,14 @@ div > .fill_bar {
   }
   75% {
     transform: translateY(2px);
+  }
+}
+
+@keyframes flashing_outline {
+  25%,75% {
+    outline-color: #CCCCCC
+  }
+  0%,50%,100% {
+    outline-color: #888888;
   }
 }

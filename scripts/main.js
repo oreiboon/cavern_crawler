@@ -7,7 +7,7 @@ function load_data() {
     let base_data = {
         persist: {
             currencies: {
-                research: 10,
+                research: 0,
                 prestige_points: 0
             },
             upgrades: {
@@ -35,10 +35,11 @@ function load_data() {
             run: {
                 floor: 1,
                 progress: 0,
+                move_distance: 0,
+                trap_spawn_tick: 5,
                 move_tick: 0,
 
                 in_combat: false,
-                attack_tick: 0,
                 enemy: null,
                 enemy_kills: 0,
 
@@ -49,7 +50,7 @@ function load_data() {
     }
 
     if (localStorage.getItem("save_data") != null) {
-        // base_data.persist = JSON.parse(localStorage.getItem("save_data"))
+        base_data.persist = JSON.parse(localStorage.getItem("save_data"))
     }
 
     return base_data
@@ -282,42 +283,23 @@ function remove_enemy(data, tile) {
 
     if (found_index != null) {
         let found_enemy = data.non_persist.run.enemies[found_index]
-        found_enemy.element.remove()
 
         data.non_persist.run.enemies.splice(found_index, 1)
     }
 }
 
 function clear_enemies(data) {
-    data.non_persist.run.enemies.forEach((value, index, _array) => {
-        value.element.remove()
-    })
     data.non_persist.run.enemies = []
 }
 
-function append_enemy(data, position, health, attack, defense, speed, graphic) {
+function append_enemy(data, distance, action_type, base_length, graphic) {
     let enemy_table = {
-        tile: position,
-        action_tick: 0,
-        stats: {
-            health: health,
-            max_health: health,
-            attack: attack,
-            defense: defense,
-            speed: speed
-        }
+        distance: distance,
+        action_type: action_type,
+        max_health: base_length,
+        health: base_length,
+        graphic: graphic
     }
-
-    enemy_table.element = document.createElement("span")
-    enemy_table.element.setAttribute("class", "dungeon_entity_icon")
-    enemy_table.element.style.setProperty("--progress", position.toString())
-    enemy_table.element.style.setProperty("--offset", "0px")
-
-    let enemy_graphic = document.createElement("img")
-    enemy_graphic.src = graphic
-    enemy_table.element.appendChild(enemy_graphic)
-
-    document.getElementById("enemy_container").appendChild(enemy_table.element)
     data.non_persist.run.enemies.push(enemy_table)
 }
 
@@ -332,9 +314,9 @@ function start_run(data) {
     data.non_persist.run.move_tick = 0
     data.non_persist.run.floor = 1
     data.non_persist.run.progress = 0
+    data.non_persist.run.move_distance = 0
+    data.non_persist.run.trap_spawn_tick = 5
     last_game_tick = 0
-
-    document.getElementById("run_player_icon").style.setProperty("--progress", data.non_persist.run.progress)
 
     document.getElementById("floor_record_text").style.display = "none"
     document.getElementById("active_run_container").style.display = "block"
@@ -350,7 +332,7 @@ function end_run(data) {
 
     if (data.non_persist.run.floor > data.persist.other.records.floor) {
         data.persist.other.records.floor = data.non_persist.run.floor
-        document.getElementById("floor_record_text").innerHTML = "Your furthest floor is Floor " + data.persist.other.records.floor.toString() + "!"
+        document.getElementById("floor_record_text").innerHTML = "Furthest: Room " + data.persist.other.records.floor.toString() + "!"
     }
     document.getElementById("floor_record_text").style.display = "block"
 
@@ -364,19 +346,54 @@ function end_run(data) {
     document.getElementById("start_run_button").removeAttribute("disabled")
 }
 
+function draw_dungeon_view(data) {
+    let dungeon_canvas = document.getElementById("dungeon_container")
+    
+    if (!dungeon_canvas.getContext) {
+        return
+    }
+
+    let ctx = dungeon_canvas.getContext("2d")
+
+    let dungeon_bg_image = document.getElementById("IMAGE_dungeon_bg1")
+    let player_image = document.getElementById("IMAGE_player_sprite")
+
+    ctx.fillStyle = "#FFFFFF"
+    ctx.fillRect(0, 0, 768, 256)
+    ctx.fillStyle = "#FFFFFF"
+
+    let walk_offset = -Math.floor((data.non_persist.run.move_distance || 0) * 256)
+    for (let i = 0; i < 4; i++) {
+        ctx.drawImage(dungeon_bg_image, walk_offset + i * 256, 0, 256, 64)
+    }
+    ctx.drawImage(player_image, 352, (Math.floor(data.non_persist.run.move_tick * 4) % 2 == 0? -2 : 0))
+
+    if (data.non_persist.run.enemies.length > 0) {
+        let draw_enemy_info = data.non_persist.run.enemies[0]
+        console.log(draw_enemy_info.distance)
+        ctx.drawImage(player_image, 352 + 256 * draw_enemy_info.distance, 0)
+    }
+}
+
 function game_tick(data) {
     let time_elapsed = (Date.now() - last_date) / 1000
     last_date = Date.now()
 
     reset_chances = Math.min(reset_chances + time_elapsed, 10)
     document.getElementById("reset_data_button").innerHTML = "Reset Data (" + reset_chances.toFixed(0).toString() + ")"
+    
+    if (document.getElementById("main_div").clientWidth < window.innerWidth) {
+        document.getElementById("main_div").style = `margin-left: calc(${(window.innerWidth - document.getElementById("main_div").clientWidth) / 2}px - 0.75%);`
+    } else {
+        document.getElementById("main_div").style = `margin-left: -1.25%;`
+    }
 
     last_save += time_elapsed
     data.persist.other.time_played = data.persist.other.time_played + time_elapsed;
 
     if (last_save > 15) {
         last_save -= 15
-        // localStorage.setItem("save_data", JSON.stringify(data.persist))
+        localStorage.setItem("save_data", JSON.stringify(data.persist))
     }
 
     if (data.non_persist.run_active == true) {
@@ -386,14 +403,17 @@ function game_tick(data) {
                 last_game_tick -= 0.016
 
                 document.getElementById("start_run_button").setAttribute("disabled", "disabled")
-                data.non_persist.run.move_tick += calculate_move_speed(data) / 60
+                let cur_move_speed = calculate_move_speed(data)
+                let time_per_room = 2
+                data.non_persist.run.move_tick += cur_move_speed / 60
+                data.non_persist.run.move_distance += cur_move_speed / (60 * time_per_room)
+                if (data.non_persist.run.move_distance > 1) {
+                    data.non_persist.run.move_distance -= 1
+                }
 
                 let current_courage_loss = calculate_courage_change(data)
                 data.non_persist.run.character_stats.courage = Math.min(Math.max(data.non_persist.run.character_stats.courage + current_courage_loss / 60, 0), data.non_persist.run.character_stats.max_courage)
-                
-                let current_health_change = calculate_health_change(data)
-                data.non_persist.run.character_stats.health = Math.min(Math.max(data.non_persist.run.character_stats.health + current_health_change / 60, 0), data.non_persist.run.character_stats.max_health)
-                
+
                 if (data.non_persist.run.character_stats.courage <= 0) {
                     end_run(data)
                     break
@@ -404,11 +424,12 @@ function game_tick(data) {
                     break
                 }
 
-                if (data.non_persist.run.move_tick >= 1) {
-                    data.non_persist.run.move_tick -= 1
+                if (data.non_persist.run.move_tick >= time_per_room) {
+                    data.non_persist.run.move_tick -= time_per_room
                     
                     data.non_persist.run.progress += 1
-                    if (data.non_persist.run.progress >= 10) {
+                    data.non_persist.run.trap_spawn_tick -= 1
+                    if (data.non_persist.run.progress >= 10000) {
                         data.non_persist.run.progress -= 10
                         data.non_persist.run.floor += 1
                         
@@ -420,62 +441,52 @@ function game_tick(data) {
                                 data.persist.unlocks.prestige = true
                             }
                         }
-
-                        append_enemy(data, 1, 1 * Math.pow(2, (data.non_persist.run.floor - 1) / 1.2), Math.floor(Math.pow(2, (data.non_persist.run.floor - 1) / 1.67)), Math.floor((data.non_persist.run.floor - 1) / 4), 1, enemy_graphic_order[(data.non_persist.run.floor - 1) % enemy_graphic_order.length])
                     }
-                    
-                    data.non_persist.run.enemies.forEach((value, _index, _array) => {
-                        if (data.non_persist.run.in_combat) {
-                            return
-                        }
-
-                        if (value.tile == data.non_persist.run.progress) {
-                            data.non_persist.run.in_combat = true
-                            data.non_persist.run.attack_tick = 0
-                            data.non_persist.run.enemy = value
-                            return
-                        }
-                    })
-                    document.getElementById("run_player_icon").style.setProperty("--progress", data.non_persist.run.progress)
+                    if (data.non_persist.run.trap_spawn_tick == 0 && data.non_persist.run.enemies.length == 0) {
+                        data.non_persist.run.trap_spawn_tick = 5
+                        let available_task_types = ["strength", "patience", "intelligence"]
+                        append_enemy(data, 3 + (data.non_persist.run.progress % 3), available_task_types[Math.floor(Math.random() * 3)], 5, enemy_graphic_order[(data.non_persist.run.floor - 1) % enemy_graphic_order.length])
+                    }
                 }
 
+                data.non_persist.run.enemies.forEach((value, _index, _array) => {
+                    if (data.non_persist.run.in_combat) {
+                        return
+                    }
+
+                    value.distance -= cur_move_speed / (60 * time_per_room)
+
+                    if (value.distance <= 0) {
+                        data.non_persist.run.move_tick = 0
+                        data.non_persist.run.move_distance = 0
+                        value.distance = 0
+
+                        data.non_persist.run.in_combat = true
+                        data.non_persist.run.enemy = value
+
+                        if (data.persist.unlocks.skill_checks != true) {
+                            data.persist.unlocks.skill_checks = true
+                        }
+                        return
+                    }
+                })
+
                 if (data.non_persist.run.in_combat) {
-                    data.non_persist.run.enemy.element.style.setProperty("--offset", "16px")
-                    document.getElementById("run_player_icon").style.setProperty("--offset", "-16px")
+                    data.non_persist.run.enemy.health -= 1 / 60
 
-                    data.non_persist.run.enemy.action_tick += data.non_persist.run.enemy.stats.speed / 60
-                    data.non_persist.run.attack_tick += calculate_attack_speed(data) / 60
-
-                    if (data.non_persist.run.enemy.action_tick >= 1) {
-                        data.non_persist.run.enemy.action_tick -= 1
-                        data.non_persist.run.character_stats.health -= calculate_damage_taken(data.non_persist.run.enemy.stats.attack, calculate_defense(data))
-                    }
-
-                    if (data.non_persist.run.attack_tick >= 1) {
-                        data.non_persist.run.attack_tick -= 1
-                        data.non_persist.run.enemy.stats.health -= calculate_damage_taken(calculate_attack(data), data.non_persist.run.enemy.stats.defense)
-                    }
-
-                    if (data.non_persist.run.enemy.stats.health >= 0) {
+                    if (data.non_persist.run.enemy.health <= 0) {
                         data.non_persist.run.enemy_kills += 1
 
                         data.non_persist.run.in_combat = false
                         remove_enemy(data, data.non_persist.run.enemy.tile)
                         data.non_persist.run.enemy = null
                     }
-                } else {
-                    document.getElementById("run_player_icon").style.setProperty("--offset", "0px")
                 }
             
-                if (data.non_persist.run.in_combat) {
-                    if (data.persist.unlocks.combat != true) {
-                        data.persist.unlocks.combat = true
-                    }
-                }
-            
-                document.getElementById("active_run_info").innerHTML = "Floor " + data.non_persist.run.floor.toString() + " - " + data.non_persist.run.progress.toString() + "/10"
+                document.getElementById("active_run_info").innerHTML = "Dungeon " + (data.persist.unlocks.prestige == true? (data.persist.layers.prestige + 1).toString() : "") + " - Room " + data.non_persist.run.progress.toString()
             }
         }
+        draw_dungeon_view(data)
     } else {
         calculate_player_stats(data)
 
@@ -540,7 +551,22 @@ function display_tick(data) {
         let current_courage_loss = calculate_courage_change(data)
 
         document.querySelector("#courage_bar > .bar_text").innerHTML = "Courage: " + data.non_persist.run.character_stats.courage.toFixed(1).toString()  + "/" + data.non_persist.run.character_stats.max_courage.toFixed(0).toString() + " (" + current_courage_loss.toFixed(2).toString() + "/s)"
+
+        if (data.non_persist.run.in_combat) {
+            document.querySelector("#action_health_bar > .fill_bar").style.setProperty("--percent", (data.non_persist.run.enemy.health || 0) / (data.non_persist.run.enemy.max_health || 1))
+            document.querySelector("#action_health_bar > .bar_text").innerHTML = "Action: " + (data.non_persist.run.enemy.health || 0).toFixed(1).toString()  + "/" + (data.non_persist.run.enemy.max_health || 0).toFixed(0).toString()
+        }
     }
+    document.getElementById("player_str_stat").setAttribute("_flashing", (data.non_persist.run.enemy && data.non_persist.run.enemy.action_type == "strength"? "true" : ""))
+    document.getElementById("player_pat_stat").setAttribute("_flashing", (data.non_persist.run.enemy && data.non_persist.run.enemy.action_type == "patience"? "true" : ""))
+    document.getElementById("player_int_stat").setAttribute("_flashing", (data.non_persist.run.enemy && data.non_persist.run.enemy.action_type == "intelligence"? "true" : ""))
+    
+    document.getElementById("player_str_stat").innerHTML = `Strength: ${data.non_persist.run.character_stats.strength}`
+    document.getElementById("player_pat_stat").innerHTML = `Patience: ${data.non_persist.run.character_stats.patience}`
+    document.getElementById("player_int_stat").innerHTML = `Tinkering: ${data.non_persist.run.character_stats.intelligence}`
+
+    document.getElementById("player_skill_stats").style.display = (data.persist.unlocks.skill_checks? "block" : "none")
+    document.getElementById("action_health_bar").style.display = (data.non_persist.run_active && data.non_persist.run.in_combat? "block" : "none")
     
     document.querySelector("#courage_bar > .fill_bar").style.setProperty("--percent", data.non_persist.run.character_stats.courage / data.non_persist.run.character_stats.max_courage)
 }
