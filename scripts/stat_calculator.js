@@ -60,7 +60,7 @@ function calculate_move_speed(data) {
     // Pick up the pace!
     return_move_speed += (data.persist.upgrades.pickup_pace > 0? (0.15 * data.persist.upgrades.pickup_pace) * (1 - data.non_persist.run.character_stats.courage / data.non_persist.run.character_stats.max_courage) : 0)
 
-    return data.non_persist.run.in_combat? 0 : return_move_speed * 4
+    return data.non_persist.run.in_combat? 0 : return_move_speed
 }
 
 function calculate_research_gain(data) {
