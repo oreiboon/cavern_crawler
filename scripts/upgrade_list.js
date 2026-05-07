@@ -63,6 +63,41 @@ let upgrades_list = {
 
             max_level: 5
         },
+{
+            id: "torch_upgrade1",
+            name: "Lantern",
+            description: "Just get a lantern at this point, it'd last you longer. <b>Slows courage loss even further.</b>",
+            icon: "upgrades/torch_brightness.png",
+            effect: [{
+                amount: {
+                    type: "flat",
+                    value: 0.2
+                },
+                prefix: "-",
+                suffix: "x Courage Loss/s"
+            }],
+
+            cost: {
+                currency: "research",
+                amount: {
+                    type: "flat_constant",
+                    value: 5
+                },
+                prefix: "",
+                suffix: "⚛"
+            },
+
+            requirements: {
+                upgrades: [
+                    {
+                        name: "torch_upgrade",
+                        amount: 5
+                    }
+                ]
+            },
+
+            max_level: 1
+        },
         {
             id: "mental_preparation",
             name: "Mental Preparation",
@@ -128,7 +163,7 @@ let upgrades_list = {
                 upgrades: [
                     {
                         name: "mental_preparation",
-                        amount: 5
+                        amount: 2
                     }
                 ]
             },

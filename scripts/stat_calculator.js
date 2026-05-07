@@ -2,9 +2,10 @@ function calculate_courage_change(data) {
     let run_data = data.non_persist.run
 
     let floor_loss_exponent = 2
-    let add_courage_loss = -Math.pow(floor_loss_exponent, run_data.floor - 1)
+    let add_courage_loss = -(1 + run_data.progress / 50)
 
     // Torch Upgrade
+    add_courage_loss *= (data.persist.upgrades.torch_upgrade1 == 1? 0.8 : 1)
     add_courage_loss += (data.persist.upgrades.torch == 1? 0.25 : 0) + (data.persist.upgrades.torch_upgrade > 0? 0.05 * data.persist.upgrades.torch_upgrade : 0)
 
     add_courage_loss -= (data.persist.upgrades.careful_looking >= 1? 0.1 : 0)

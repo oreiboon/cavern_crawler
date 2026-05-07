@@ -472,7 +472,7 @@ function game_tick(data) {
                 })
 
                 if (data.non_persist.run.in_combat) {
-                    data.non_persist.run.enemy.health -= 1 / 60
+                    data.non_persist.run.enemy.health -= calculate_action_speed(data) / 60
 
                     if (data.non_persist.run.enemy.health <= 0) {
                         data.non_persist.run.enemy_kills += 1
@@ -546,7 +546,7 @@ function display_tick(data) {
     document.querySelector("#courage_bar > .bar_text").innerHTML = "Courage: " + data.non_persist.run.character_stats.courage.toFixed(1).toString()  + "/" + data.non_persist.run.character_stats.max_courage.toFixed(0).toString()
     if (data.non_persist.run_active) {
         let research_gain = calculate_research_gain(data)
-        document.getElementById("research_display").innerHTML = "⚛ " + data.persist.currencies.research.toFixed(2).toString() + " (+" + research_gain.toFixed(2).toString() + ")"
+        document.getElementById("research_display").innerHTML = "⚛️ " + data.persist.currencies.research.toFixed(2).toString() + " (+" + research_gain.toFixed(2).toString() + ")"
 
         let current_courage_loss = calculate_courage_change(data)
 
